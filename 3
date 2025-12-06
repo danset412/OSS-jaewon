@@ -1,0 +1,14 @@
+## 3. Git 설정과 저장소 생성
+
+### Git 최초 설정
+Git 사용 전 한 번만 설정하는 전역 설정은 user.name, user.email, core.autocrlf, core.safecrlf, core.editor, init.defaultBranch 등이 있으며, 설정 정보는 ~/.gitconfig 파일에 저장된다.
+
+### Git 저장소 생성
+git init 명령을 사용하여 프로젝트 폴더를 Git 저장소로 초기화할 수 있다. 저장소가 생성되면 .git 폴더가 만들어지며, 이 폴더에는 모든 버전 정보가 저장된다.
+
+---
+
+## 4. 커밋과 로그, 과거 여행
+Git은 작업 디렉토리, 스테이징 영역, 저장소의 세 영역을 기준으로 동작한다. git status를 통해 파일 상태를 확인하고 git commit으로 변경 사항을 저장한다.
+
+git log, git show 등을 통해 버전 이력을 확인할 수 있으며, HEAD~, HEAD~2와 같은 표기법으로 이전 커밋을 가리키고 git checkout 명령으로 과거 버전으로 이동할 수 있다.
