@@ -1,0 +1,63 @@
+
+---
+
+#  Git: 커밋 수정 & 리베이스 / 히스토리 재작성 요약
+
+##  주요 기능 & 개념
+
+### • `git commit --amend`
+
+* 가장 최근 커밋을 수정할 때 사용. 커밋 메시지, 스테이징된 변경사항을 덮어쓸 수 있음.
+* 파일 추가를 빼먹었거나 커밋 메시지 오타 등을 바로잡을 때 유용. 
+* 단, amend는 실제로 “새 커밋”을 만들어 기존 커밋을 대체하기 때문에, 커밋 해시가 변경됨. 즉, **이미 원격 저장소에 push 한 커밋에는 사용하지 않는 것이 안전**. 
+
+### • `git rebase`
+
+* 브랜치의 베이스를 다른 브랜치의 최신 커밋으로 옮기면서, **자신의 커밋들을 새로 적용(re-play)** 하는 방식. 결과적으로 커밋 히스토리가 **선형(linear)** 이 됨. 
+* merge와 달리 별도의 병합 커밋 없이 깔끔한 로그 유지 가능. 
+* `rebase -i` (interactive) 옵션을 사용하면, 커밋 메시지 수정, 커밋 합치기(squash/fixup), 불필요 커밋 제거(drop) 등 **히스토리 재작성**이 가능. 
+* 하지만, rebase 역시 커밋 ID를 새로 생성하는 방식이기 때문에, 이미 공유(push) 된 커밋이 포함된 브랜치에 대해 사용하면 다른 사람과 기록이 엉킬 수 있어 주의해야 함.
+
+### • 리베이스 중 충돌 / 커밋 수정 흐름
+
+* `git rebase -i` → `edit` 또는 `reword/squash` 지정 → 충돌 발생 또는 커밋 수정 필요 시
+  → `git commit --amend` (필요 시 변경) → `git rebase --continue` 로 진행. 
+* 만약 충돌 해결이 복잡하거나 잘못되었다면, `git rebase --abort` 로 리베이스 취소 가능. 
+
+---
+
+##  대표 명령어 정리 (치트시트)
+
+```bash
+# 최근 커밋 수정 (메시지 또는 스테이지한 변경 포함)
+git add <file>
+git commit --amend           # 메시지 수정 or staged 변경 포함
+git commit --amend --no-edit # 메시지는 유지, 변경사항만 반영
+
+# 여러 커밋 또는 이전 커밋 수정 (interactive rebase)
+git rebase -i HEAD~N         # 최근 N개 커밋 선택
+# pick / reword / edit / squash / fixup / drop 등 선택
+
+# rebase 진행 중 커밋 수정
+git commit --amend
+git rebase --continue
+
+# rebase 중단
+git rebase --abort
+
+# 리베이스 완료 후 원격 push (주의: 히스토리 바뀜)
+git push --force-with-lease
+```
+
+---
+
+##  언제 & 왜 사용하나?
+
+| 목적 / 상황                                  | 추천 방식                         |
+| ---------------------------------------- | ----------------------------- |
+| 최근 커밋 메시지 오타 수정 / 빠뜨린 파일 추가              | `git commit --amend`          |
+| 여러 커밋을 하나로 정리 / 커밋 메시지 정리 / 깔끔한 히스토리 유지  | `git rebase -i` (interactive) |
+| 기능 브랜치 → main 병합 전에 커밋 정리 & 깔끔한 로그 유지    | 리베이스 후 fast-forward merge     |
+| 이미 공유된 브랜치, 협업 중인 브랜치에서는 히스토리 보존 + 안전 우선 | `git merge` (또는 리베이스 피하기)     |
+
+---
